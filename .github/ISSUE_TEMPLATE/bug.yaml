@@ -1,0 +1,59 @@
+name: Bug report
+description: Something isn't working (display, LEDs, sound, sensors, game logic)
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! Please include your hardware setup, since many issues are wiring- or firmware-related.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part is affected?
+      options:
+        - Display (TFT ILI9341)
+        - LED ring (WS2812B)
+        - Buzzer / audio
+        - PIR auto-wake
+        - Light sensor (brightness/volume)
+        - Game logic (bets, payouts, spin)
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: firmware
+    attributes:
+      label: MicroPython version and board
+      placeholder: "e.g. MicroPython v1.24 on Arduino Nano ESP32"
+    validations:
+      required: true
+
+  - type: textarea
+    id: wiring
+    attributes:
+      label: Hardware / wiring differences
+      description: Any change from the README wiring (different pins, power supply, display variant, LED count)
+      placeholder: "e.g. 5V from USB, LED ring on D6, no level shifter"
+
+  - type: textarea
+    id: what-wrong
+    attributes:
+      label: What's wrong?
+      description: What you expected, what happened, and steps to reproduce
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Serial output / traceback
+      description: Paste REPL output or error messages
+      render: shell
+
+  - type: upload
+    id: media
+    attributes:
+      label: Photo or video (optional)
+      description: Helpful for display glitches, LED behaviour, wiring
