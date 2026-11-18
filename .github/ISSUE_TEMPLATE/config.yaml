@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions & build help
+    url: https://github.com/dav-cip/ProGamble/discussions
+    about: Wiring or setup questions are better asked in Discussions
