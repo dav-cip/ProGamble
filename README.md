@@ -208,3 +208,24 @@ Rules (European roulette, 37 pockets):
 | Screen | Dims during SLEEP |
 | Ring and buzzer | Change with the state and the result |
 | Status LED | Lights up for 3 s after a win |
+
+## Error handling
+
+| Situation | Detection | Reaction |
+|---|---|---|
+| Photoresistor shorted or unplugged | Reading stuck at the minimum or maximum for 3 s | `!LIGHT` on screen, fallback brightness of 70 %, recovers on its own |
+| PIR stuck high | Signal high for 10 min with no button press | `!PIR` on screen, PIR ignored (the buttons still wake the device) |
+| Screen missing or crashed | ILI9341 ID read (needs MISO) or an exception | ERROR mode with a red ring, LED and beeps, retried every 5 s or on SPIN |
+| Unexpected error during a spin | `try/except` in the main loop | Bet refunded, back to a safe state, no crash |
+| Bet larger than the balance | Balance check | "NOT ENOUGH POINTS" message and a beep |
+| Out of points | Balance < 10 | "GAME OVER". Hold SPIN to restart. |
+
+Everything is **non-blocking**, using `time.ticks_ms()` and `time.ticks_diff()`.
+
+## Known limitations
+
+- An **unplugged** photoresistor signal wire leaves the input floating and can't always be detected. A short
+  circuit can.
+- An unplugged PIR reads 0, so it looks like "nobody is here". The buttons still wake the device.
+- Screen detection needs the MISO wire (D12). Without it, turn the ID check off in `config.py`.
+- The touch panel and SD card slot of the display are not used.
