@@ -43,3 +43,97 @@ GitHub repository: *to fill in*
 >   the driver changes.
 > - The ring is a **WS2812B** (or a compatible SK6812 RGB). Count its LEDs (8, 12, 16 or 24) and set that
 >   number in the code. It also affects the power budget below.
+
+## Wiring diagram
+
+![ProGamble wiring diagram](docs/wiring.png)
+
+The editable source is [`docs/wiring.drawio`](docs/wiring.drawio). Open it with drawio-desktop:
+
+```sh
+drawio docs/wiring.drawio
+```
+
+To export the picture again after editing:
+
+```sh
+drawio -x -f png -s 2 -b 10 -o docs/wiring.png docs/wiring.drawio
+```
+
+## Wiring (Nano ESP32)
+
+D2, A0 and the other pin names are the labels **printed on the board**. In MicroPython you use the
+**GPIO number**, which is listed next to each pin name. Check every pin against the official
+[Nano ESP32 pinout](https://docs.arduino.cc/hardware/nano-esp32/).
+
+### 2.8" TFT display (hardware SPI)
+
+| Display pin | Board pin | GPIO | Note |
+|---|---|---|---|
+| VCC | 3V3 | – | The module has its own regulator. See "Power and precautions". |
+| GND | GND | – | |
+| CS | D10 | 21 | Chip select |
+| RESET | D8 | 17 | |
+| DC / RS | D9 | 18 | Data / command |
+| SDI (MOSI) | D11 | 38 | SPI data to the screen |
+| SCK | D13 | 48 | SPI clock. The board's built-in LED (also on D13) will flicker. That is normal. |
+| LED | D6 | 9 | Backlight, dimmed with PWM. See the warning below. |
+| SDO (MISO) | D12 | 47 | Optional. Only needed to read the screen ID (screen detection). |
+| T_CLK, T_CS, T_DIN, T_DO, T_IRQ | – | – | Touch (XPT2046): **not connected** |
+| SD_CS, SD_MOSI, SD_MISO, SD_SCK | – | – | SD card header: **not connected** |
+
+### WS2812B LED ring
+
+| Ring pin | Connects to | Note |
+|---|---|---|
+| DIN | D7 (GPIO 10) **through the 330 Ω resistor** | Put the resistor close to the ring. |
+| 5V / VCC | 5 V rail (VBUS) | |
+| GND | GND rail | |
+| DOUT | – | Not connected. It only chains a second ring. |
+| **470 µF capacitor** | between the ring's 5V and GND | The **stripe (−) goes to GND**. Place it right at the ring. |
+
+### Sensors, buzzer, status LED and buttons
+
+| Component | Module pin | Board pin | GPIO |
+|---|---|---|---|
+| Photoresistor | S / + / − | A0 / 3V3 / GND | 1 (ADC) |
+| PIR sensor | S / + / − | A1 / VBUS (5 V) / GND | 2 |
+| Status LED | S / + / − | A2 / 3V3 / GND | 3 |
+| Passive buzzer | S (+) / − | A3 / GND | 4 (PWM) |
+| Button PREV | pin 1 / pin 2 | D2 / GND | 5 |
+| Button NEXT | pin 1 / pin 2 | D3 / GND | 6 |
+| Button SELECT | pin 1 / pin 2 | D4 / GND | 7 |
+| Button SPIN | pin 1 / pin 2 | D5 / GND | 8 |
+
+- **Buttons:** each button connects to its pin on one side and to GND on the other. The code turns on the
+  ESP32's **internal pull-ups** (`Pin.PULL_UP`), so a pressed button reads `0` and no external resistor is
+  needed. The "+/−" marks on a plain 2-pin push button don't matter.
+- **Status LED:** some Keyestudio LED modules leave the `+` pin unused. Wiring it to 3V3 is harmless either way.
+- **Buzzer:** if yours is a 3-pin buzzer module, wire its `+` to 3V3.
+- **All GNDs are connected together** through the GND rail of the breadboard.
+
+### Pin summary (MicroPython `config.py`)
+
+```python
+# Arduino Nano ESP32: printed label -> ESP32-S3 GPIO
+PIN_TFT_SCK    = 48  # D13
+PIN_TFT_MOSI   = 38  # D11
+PIN_TFT_MISO   = 47  # D12 (optional)
+PIN_TFT_CS     = 21  # D10
+PIN_TFT_DC     = 18  # D9
+PIN_TFT_RST    = 17  # D8
+PIN_TFT_BL     = 9   # D6 (PWM backlight), None if LED is wired to 3V3
+
+PIN_RING       = 10  # D7 -> 330 Ω -> ring DIN
+PIN_BTN_PREV   = 5   # D2
+PIN_BTN_NEXT   = 6   # D3
+PIN_BTN_SELECT = 7   # D4
+PIN_BTN_SPIN   = 8   # D5
+
+PIN_LIGHT      = 1   # A0 photoresistor (ADC1)
+PIN_PIR        = 2   # A1 PIR
+PIN_STATUS_LED = 3   # A2
+PIN_BUZZER     = 4   # A3 (PWM)
+```
+
+Every analog input is on **ADC1** (A0–A3), so it keeps working when Wi-Fi is on.
