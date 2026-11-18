@@ -1,0 +1,21 @@
+name: Feature / hardware idea
+description: Suggest a game mode, sensor, or improvement
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like to see?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why is it useful?
+  - type: checkboxes
+    id: hardware
+    attributes:
+      label: Does it need new hardware?
+      options:
+        - label: Yes, it needs extra components
+        - label: No, software only
