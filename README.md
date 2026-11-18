@@ -137,3 +137,30 @@ PIN_BUZZER     = 4   # A3 (PWM)
 ```
 
 Every analog input is on **ADC1** (A0–A3), so it keeps working when Wi-Fi is on.
+
+## Power and precautions
+
+- **Power source:** USB-C, from a computer or a 5 V power bank of at least 1 A. The `VBUS` pin gives that 5 V
+  when the board runs on USB. **Measure about 5 V between VBUS and GND with a multimeter before you plug in
+  the ring.**
+- **LED ring current:** a WS2812B LED can draw up to ~60 mA at full white, so 16 LEDs ≈ 1 A and
+  24 LEDs ≈ 1.4 A. That is more than a computer USB port supplies. The code **caps the ring brightness
+  around 35 %** (about 350 mA for 16 LEDs). The 470 µF capacitor goes right at the ring, between 5V and GND,
+  with the stripe (−) on GND.
+- **Ring data level:** the ESP32 sends 3.3 V data to a ring powered at 5 V. This normally works with a
+  **short** data wire and the 330 Ω resistor. If the ring flickers or shows random colours, shorten the wire
+  or add a level shifter (74AHCT125).
+- **Display:**
+  - The logic is **3.3 V only**, which matches the ESP32.
+  - On the red ILI9341 modules, `VCC` goes through an onboard 3.3 V regulator. Most ESP32 builds power it from
+    3V3. If the screen is dim or unstable, move `VCC` to 5 V, but only if the **J1 jumper is open**. J1
+    bypasses the regulator.
+  - The `LED` pin usually drives the backlight through a transistor, so PWM from D6 is safe. If your module
+    has **no** transistor there, connect `LED` to 3V3 and set `PIN_TFT_BL = None`.
+- **PIR:**
+  - Powered from 5 V, but its output is about 3.3 V, so it is safe for the ESP32. **Measure S before
+    connecting it.**
+  - It needs about 30 s to warm up after power-on.
+  - The two potentiometers on the back set the sensitivity and the hold time.
+- **Photoresistor:** power it from **3V3, never 5 V**. Its output must stay under 3.3 V.
+- **No 5 V signal must ever reach a GPIO pin.**
