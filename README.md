@@ -164,3 +164,47 @@ Every analog input is on **ADC1** (A0–A3), so it keeps working when Wi-Fi is o
   - The two potentiometers on the back set the sensitivity and the hold time.
 - **Photoresistor:** power it from **3V3, never 5 V**. Its output must stay under 3.3 V.
 - **No 5 V signal must ever reach a GPIO pin.**
+
+## Installation and running
+
+1. Flash MicroPython for the Arduino Nano ESP32 onto the board.
+2. Copy the project's `.py` files to the board's root, for example with `mpremote cp *.py :`.
+3. Reset the board. `main.py` starts by itself.
+4. **Light calibration:** run the calibration script, then cover the sensor and shine a light on it. Copy the
+   dark and bright readings into `config.py`.
+
+If the screen is upside down or the colours are swapped, change the display's MADCTL (rotation) value in
+`config.py`.
+
+## How to play
+
+- **PREV / NEXT:** change the selected option (chip or bet). Hold the button to scroll fast.
+- **SELECT:** switch between the CHIP row (10 / 25 / 50 / 100) and the BET row (red, black, green, numbers 0–36).
+- **SPIN:** spin the wheel. **Hold SPIN for 1.5 s** to start a new game (500 points).
+
+Rules (European roulette, 37 pockets):
+
+| Bet | Payout |
+|---|---|
+| Red or black | ×2 |
+| A single number, or green (0) | ×36 |
+
+- When 0 comes up, red and black bets lose.
+- The bet is taken from the balance when the wheel is spun.
+- A bet larger than the balance is refused.
+
+## System states
+
+`BOOT → BET ⇄ SPIN → RESULT → BET`, plus:
+
+| State | When |
+|---|---|
+| `SLEEP` | No presence and no button press for 60 s |
+| `GAMEOVER` | Balance under 10 points |
+| `ERROR` | Safe mode after a fault |
+
+| Output | Behaviour |
+|---|---|
+| Screen | Dims during SLEEP |
+| Ring and buzzer | Change with the state and the result |
+| Status LED | Lights up for 3 s after a win |
