@@ -229,3 +229,15 @@ Everything is **non-blocking**, using `time.ticks_ms()` and `time.ticks_diff()`.
 - An unplugged PIR reads 0, so it looks like "nobody is here". The buttons still wake the device.
 - Screen detection needs the MISO wire (D12). Without it, turn the ID check off in `config.py`.
 - The touch panel and SD card slot of the display are not used.
+
+## AI usage
+
+Tool: Claude (Anthropic). It was used to write this README, to draw the wiring diagram (`docs/wiring.drawio`)
+and to check the pin choices. *(Team: list what you changed and verified yourselves.)*
+
+## External sources
+
+- [Arduino Nano ESP32 documentation and pinout](https://docs.arduino.cc/hardware/nano-esp32/)
+- ILI9341 controller datasheet: the standard init sequence (also used by Adafruit_ILI9341)
+- [2.8" ILI9341 SPI module (LCDwiki)](https://www.lcdwiki.com/2.8inch_SPI_Module_ILI9341_SKU:MSP2807)
+- WS2812B datasheet (Worldsemi) and the MicroPython `neopixel` module
