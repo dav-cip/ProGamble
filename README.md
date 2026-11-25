@@ -143,9 +143,9 @@ Every analog input is on **ADC1** (A0–A3), so it keeps working when Wi-Fi is o
 - **Power source:** USB-C, from a computer or a 5 V power bank of at least 1 A. The `VBUS` pin gives that 5 V
   when the board runs on USB. **Measure about 5 V between VBUS and GND with a multimeter before you plug in
   the ring.**
-- **LED ring current:** a WS2812B LED can draw up to ~60 mA at full white, so 16 LEDs ≈ 1 A and
+- **LED ring current:** a WS2812B LED can draw up to ~60 mA at full white, so 24 LEDs ≈ 1 A and
   24 LEDs ≈ 1.4 A. That is more than a computer USB port supplies. The code **caps the ring brightness
-  around 35 %** (about 350 mA for 16 LEDs). The 470 µF capacitor goes right at the ring, between 5V and GND,
+  around 35 %** (about 350 mA for 24 LEDs). The 470 µF capacitor goes right at the ring, between 5V and GND,
   with the stripe (−) on GND.
 - **Ring data level:** the ESP32 sends 3.3 V data to a ring powered at 5 V. This normally works with a
   **short** data wire and the 330 Ω resistor. If the ring flickers or shows random colours, shorten the wire
