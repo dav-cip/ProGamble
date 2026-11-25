@@ -32,8 +32,8 @@ class ILI9341:
         self._glyphs = {}   # cache : une rangee de pixels d'une lettre
         self.cs.value(1)
         self._reset()
-        self._check_present()
         self._init_display()
+        self._check_present()      # apres l'init : c'est la que la lecture a ete validee
 
     # ---------- communication bas niveau ----------
     def _cmd(self, cmd, data=None):
@@ -56,16 +56,24 @@ class ILI9341:
             self._cmd(0x01)  # reset logiciel
         time.sleep_ms(150)
 
-    def read_id(self):
-        """Lit l'identifiant ILI9341 (commande 0xD3). Un vrai ILI9341 repond 00 93 41."""
-        buf = bytearray(4)
+    def _read8(self, cmd, index):
+        """Lit l'octet numero 'index' de la reponse a 'cmd'.
+        La commande 0xD9 (non documentee) choisit l'octet a lire, puis on en lit un seul.
+        C'est la methode d'Adafruit et de TFT_eSPI : en SPI, beaucoup de modules ne
+        repondent pas a une lecture directe de plusieurs octets (on lit FF FF FF FF)."""
+        self._cmd(0xD9, bytes((0x10 + index,)))
+        buf = bytearray(1)
         self.cs.value(0)
         self.dc.value(0)
-        self.spi.write(b"\xD3")
+        self.spi.write(bytes((cmd,)))
         self.dc.value(1)
         self.spi.readinto(buf)
         self.cs.value(1)
-        return bytes(buf)
+        return buf[0]
+
+    def read_id(self):
+        """Lit l'identifiant ILI9341 (commande 0xD3). Un vrai ILI9341 repond 00 93 41."""
+        return bytes(self._read8(0xD3, i) for i in (1, 2, 3))
 
     def _check_present(self):
         """Leve OSError si l'ecran ne repond pas (debranche, mauvais fil...)."""
@@ -73,10 +81,10 @@ class ILI9341:
             return
         self.id = self.read_id()
         print("TFT id:", self.id)
-        if self.id == b"\xff\xff\xff\xff":
+        if self.id == b"\xff\xff\xff":
             # Ligne MISO jamais tiree a 0 : fil SDO absent/mal branche, ou ecran debranche
             raise OSError("Aucune reponse sur MISO (fil SDO -> D12 ?) - lancer tft_diag.py")
-        if self.id == b"\x00\x00\x00\x00":
+        if self.id == b"\x00\x00\x00":
             raise OSError("Ecran ILI9341 absent (aucune reponse)")
 
     def _init_display(self):

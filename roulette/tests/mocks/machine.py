@@ -52,19 +52,28 @@ class SPI:
 
     def __init__(self, *a, **k):
         self.baudrate = k.get("baudrate", 0)
+        self.index = 0           # octet choisi par la commande 0xD9 (donnee 0x1N)
 
     def init(self, **k):
         self.baudrate = k.get("baudrate", self.baudrate)
 
     def write(self, data):
         SPI.writes += 1
+        if len(data) == 1 and data[0] & 0xF0 == 0x10:
+            self.index = data[0] & 0x0F
 
     def readinto(self, buf, write=0):
         SPI.read_baudrates.append(self.baudrate)
-        # Comme le vrai ILI9341 : trop rapide pour lire -> reponse illisible
-        ok = SPI.present and self.baudrate <= 6_000_000
-        data = b"\x00\x93\x41\x00" if ok else b"\x00\x00\x00\x00"
-        buf[:] = data[:len(buf)]
+        if not SPI.present:
+            buf[:] = b"\x00" * len(buf)          # ecran debranche
+            return
+        # Comme le vrai module (voir tft_diag.py) : la lecture directe de plusieurs
+        # octets donne FF, seule la lecture d'un octet choisi par 0xD9 repond.
+        # Et trop rapide pour lire (> ~6 MHz) -> reponse illisible.
+        if len(buf) == 1 and self.baudrate <= 6_000_000:
+            buf[0] = (0x00, 0x00, 0x93, 0x41)[min(self.index, 3)]
+        else:
+            buf[:] = b"\xff" * len(buf)
 
     def deinit(self):
         pass
