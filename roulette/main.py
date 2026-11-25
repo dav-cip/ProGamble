@@ -198,6 +198,8 @@ class App:
 
     def _do_sleep(self, now):
         if self.events or (self.pir.usable and self.pir.motion):
+            # Le bouton qui reveille ne doit pas aussi jouer (ex: SPIN lancerait un tour)
+            self.pad.mute_held()
             self.buzzer.play(sound.CLICK)
             self.enter(BET, now)
 

@@ -115,6 +115,16 @@ def test_sleep_and_wake():
     assert app.state == M.BET
 
 
+def test_wake_with_spin_does_not_bet():
+    app = fresh()
+    run(app, 2000 + config.SLEEP_TIMEOUT_MS + 1000)
+    assert app.state == M.SLEEP
+    press(app, "spin")                         # ce bouton sert seulement a reveiller
+    assert app.state == M.BET and app.game.balance == config.START_BALANCE
+    press(app, "spin")                         # le prochain appui lance bien le tour
+    assert app.state == M.SPIN
+
+
 def test_exception_recovery_refunds():
     app = fresh()
     run(app, 2000)

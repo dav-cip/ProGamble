@@ -25,6 +25,12 @@ class Button:
         self.pressed_at = 0
         self.long_sent = False
         self.next_repeat = 0
+        self.muted = False         # True = on ignore cet appui jusqu'au relachement
+
+    def mute(self):
+        """Ignore l'appui en cours (pas de click, long ni repeat) jusqu'au relachement."""
+        if self.stable:
+            self.muted = True
 
     def update(self, now):
         events = []
@@ -41,9 +47,10 @@ class Button:
                 events.append("press")
             else:
                 events.append("release")
-                if not self.long_sent:
+                if not self.long_sent and not self.muted:
                     events.append("click")
-        elif self.stable:                         # bouton maintenu
+                self.muted = False
+        elif self.stable and not self.muted:      # bouton maintenu
             if not self.long_sent and ticks_diff(now, self.pressed_at) >= config.LONG_PRESS_MS:
                 self.long_sent = True
                 events.append("long")
@@ -70,3 +77,8 @@ class ButtonPad:
             for ev in button.update(now):
                 out.append((name, ev))
         return out
+
+    def mute_held(self):
+        """Les boutons encore enfonces ne produiront plus rien avant d'etre relaches."""
+        for button in self.buttons.values():
+            button.mute()
