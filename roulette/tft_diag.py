@@ -39,6 +39,8 @@ def read_indexed(tft, cmd, index):
 
 
 print("=== Diagnostic ecran ===")
+# Retroeclairage allume, que la broche LED soit sur 3V3 ou sur D6
+Pin(config.PIN_TFT_BL if config.PIN_TFT_BL is not None else config.pin("D6"), Pin.OUT, value=1)
 spi = SPI(1, baudrate=READ_BAUD, polarity=0, phase=0, sck=Pin(config.PIN_TFT_SCK),
           mosi=Pin(config.PIN_TFT_MOSI), miso=Pin(config.PIN_TFT_MISO))
 tft = ILI9341(spi, Pin(config.PIN_TFT_CS, Pin.OUT, value=1), Pin(config.PIN_TFT_DC, Pin.OUT),
@@ -89,6 +91,10 @@ else:
     print("MISO : l'ecran repond. Le fil SDO -> D12 fonctionne.")
     if b"\x93\x41" in everything:
         print("  Controleur ILI9341 reconnu (93 41).")
+    elif b"\x94\x88" in everything:
+        print("  C'est un ILI9488 (94 88), pas un ILI9341 : il faut un autre pilote.")
+    elif b"\x77\x96" in everything:
+        print("  C'est un ST7796 (77 96), pas un ILI9341 : il faut un autre pilote.")
     elif b"\x85\x85" in everything or b"\x85\x52" in everything:
         print("  Ca ressemble a un ST7789, pas a un ILI9341 : le pilote ne convient pas.")
     else:
@@ -96,5 +102,7 @@ else:
 print("Couleurs :")
 print("  - Vu ROUGE, VERT, BLEU, BLANC : l'ecran et les fils SCK/SDI/CS/DC/RESET sont bons.")
 print("  - Couleurs inversees (ex. rouge -> cyan) : le controleur n'est peut-etre pas un ILI9341.")
+print("  - Image brouillee, rayee ou seulement une partie de l'ecran : probablement un ILI9488")
+print("    (ecran 480x320, couleurs sur 3 octets) -> il faut un autre pilote.")
 print("  - Ecran reste blanc : verifier SCK->D13, SDI->D11, CS->D10, DC->D9, RESET->D8.")
 print("  - Ecran noir : verifier VCC, GND et la broche LED (retroeclairage).")
