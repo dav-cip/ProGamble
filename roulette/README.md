@@ -62,7 +62,7 @@ Tous les GND sont reliés ensemble (rail GND du breadboard).
 ### Alimentation et précautions
 - **Anneau WS2812B** (câble prégainé) : on utilise le connecteur **d'entrée** (GND, DI, 5V). Le connecteur de
   sortie (GND, DO, 5V) reste débranché et isolé. Alimentation 5 V par VBUS (USB) ; le code limite l'intensité
-  à 35 % (`RING_MAX_LEVEL`), soit ~350 mA au plus. Le condensateur de 470 µF entre 5V et GND est recommandé mais
+  à 25 % (`RING_MAX_LEVEL`), soit ~360 mA au plus pour 24 DEL. Le condensateur de 470 µF entre 5V et GND est recommandé mais
   facultatif : sans lui, brancher le fil 5V de l'anneau AVANT de brancher l'USB, et baisser `RING_MAX_LEVEL`
   à 0.2 si l'anneau scintille. La donnée sort en 3,3 V : ça fonctionne avec un fil court.
 - **Rétro-éclairage de l'écran** : la broche LED est reliée à 3V3 (toujours allumé, `PIN_TFT_BL = None`). Ne la

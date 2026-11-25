@@ -104,7 +104,9 @@ SLEEP_TIMEOUT_MS = 60_000     # sans presence ni bouton pendant 60 s -> veille
 # ---------------------------------------------------------------
 BACKLIGHT_MIN_PCT = 20        # luminosite mini de l'ecran dans le noir
 BACKLIGHT_SLEEP_PCT = 8       # luminosite en veille
-RING_MAX_LEVEL = 0.35         # plafond de l'anneau (limite le courant)
+# Plafond de l'anneau (limite le courant). Pire cas = tout en blanc :
+# 24 DEL x 60 mA x 0.25 = ~360 mA (avec 0.35 on monterait a ~500 mA, trop pour l'USB).
+RING_MAX_LEVEL = 0.25
 ENV_UPDATE_MS = 300           # periode de mise a jour de la luminosite
 
 # ---------------------------------------------------------------
