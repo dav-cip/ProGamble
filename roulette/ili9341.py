@@ -73,7 +73,10 @@ class ILI9341:
             return
         self.id = self.read_id()
         print("TFT id:", self.id)
-        if self.id == b"\x00\x00\x00\x00" or self.id == b"\xff\xff\xff\xff":
+        if self.id == b"\xff\xff\xff\xff":
+            # Ligne MISO jamais tiree a 0 : fil SDO absent/mal branche, ou ecran debranche
+            raise OSError("Aucune reponse sur MISO (fil SDO -> D12 ?) - lancer tft_diag.py")
+        if self.id == b"\x00\x00\x00\x00":
             raise OSError("Ecran ILI9341 absent (aucune reponse)")
 
     def _init_display(self):
