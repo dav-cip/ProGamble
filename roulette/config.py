@@ -110,7 +110,7 @@ ENV_UPDATE_MS = 300           # periode de mise a jour de la luminosite
 # ---------------------------------------------------------------
 # 8. ANIMATION DE LA ROULETTE
 # ---------------------------------------------------------------
-RING_COUNT = 16
+RING_COUNT = 24               # nombre de DEL de l'anneau (le notre en a 24)
 SPIN_TOTAL_MS = 4500
 SPIN_MIN_INTERVAL_MS = 60     # vitesse au debut
 SPIN_MAX_INTERVAL_MS = 400    # vitesse a la fin (ralentit)

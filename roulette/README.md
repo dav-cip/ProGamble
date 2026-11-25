@@ -19,7 +19,7 @@ Dépôt GitHub : *à compléter*
 |---|---|---|
 | 1 | Arduino Nano ESP32 (ABX00083) | Carte principale |
 | 1 | Écran TFT ILI9341 3,2" SPI (non tactile) | **Composant nouveau** : affichage |
-| 1 | Anneau WS2812B 16 DEL | **Composant nouveau** : animation lumineuse |
+| 1 | Anneau WS2812B 24 DEL | **Composant nouveau** : animation lumineuse |
 | 1 | Photorésistance (module) | Capteur **analogique** : lumière ambiante |
 | 1 | Capteur PIR (module) | Capteur **numérique** : présence |
 | 1 | Buzzer passif | Sortie **PWM** : sons |

@@ -1,5 +1,5 @@
 """
-leds.py - Anneau WS2812B (16 DEL) et DEL d'etat, animations non bloquantes.
+leds.py - Anneau WS2812B (RING_COUNT DEL, 24 sur notre anneau) et DEL d'etat, animations non bloquantes.
 
 Anneau : on choisit un MODE avec set_mode(), puis update(now) dessine les images
 au bon rythme. L'intensite globale suit la lumiere ambiante et ne depasse jamais
