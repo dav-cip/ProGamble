@@ -48,15 +48,22 @@ class PWM:
 class SPI:
     present = True           # False = ecran debranche (lit 00 00 00 00)
     writes = 0
+    read_baudrates = []      # vitesse du bus a chaque lecture (pour les tests)
 
     def __init__(self, *a, **k):
-        pass
+        self.baudrate = k.get("baudrate", 0)
+
+    def init(self, **k):
+        self.baudrate = k.get("baudrate", self.baudrate)
 
     def write(self, data):
         SPI.writes += 1
 
     def readinto(self, buf, write=0):
-        data = b"\x00\x93\x41\x00" if SPI.present else b"\x00\x00\x00\x00"
+        SPI.read_baudrates.append(self.baudrate)
+        # Comme le vrai ILI9341 : trop rapide pour lire -> reponse illisible
+        ok = SPI.present and self.baudrate <= 6_000_000
+        data = b"\x00\x93\x41\x00" if ok else b"\x00\x00\x00\x00"
         buf[:] = data[:len(buf)]
 
     def deinit(self):

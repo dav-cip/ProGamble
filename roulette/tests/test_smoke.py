@@ -104,6 +104,14 @@ def test_screen_absent_then_recovers():
     assert app.state == M.BET
 
 
+def test_screen_id_read_slow_then_full_speed():
+    SPI.read_baudrates.clear()
+    app = fresh()
+    assert app.state == M.BOOT                 # l'ecran a bien ete reconnu
+    assert SPI.read_baudrates and max(SPI.read_baudrates) <= 6_000_000
+    assert app.screen.tft.spi.baudrate == config.TFT_BAUDRATE
+
+
 def test_sleep_and_wake():
     app = fresh()
     run(app, config.PIR_WARMUP_MS + 1000)      # le PIR est pret

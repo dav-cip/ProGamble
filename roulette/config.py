@@ -55,6 +55,9 @@ PIN_PIR = pin("A1")           # capteur de presence PIR (NUMERIQUE)
 # 2. ECRAN
 # ---------------------------------------------------------------
 TFT_BAUDRATE = 40_000_000     # baisser a 20_000_000 si l'image est instable
+# Vitesse pendant l'init et la lecture de l'ID : l'ILI9341 ne sait pas LIRE plus
+# vite que ~6 MHz (fiche technique). On passe a TFT_BAUDRATE une fois l'ecran pret.
+TFT_INIT_BAUDRATE = 4_000_000
 # Registre MADCTL : 0x28 = paysage. Essaie 0xE8 si l'image est a l'envers,
 # ou 0x20 si les couleurs rouge/bleu sont inversees.
 TFT_MADCTL = 0x28

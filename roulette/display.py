@@ -245,7 +245,7 @@ def create_screen():
     spi = None
     for bus_id in (1, 2):
         try:
-            spi = SPI(bus_id, baudrate=config.TFT_BAUDRATE, polarity=0, phase=0,
+            spi = SPI(bus_id, baudrate=config.TFT_INIT_BAUDRATE, polarity=0, phase=0,
                       sck=Pin(config.PIN_TFT_SCK), mosi=Pin(config.PIN_TFT_MOSI),
                       miso=Pin(config.PIN_TFT_MISO))
             break
@@ -260,4 +260,5 @@ def create_screen():
     except Exception:
         spi.deinit()                      # on libere le bus avant la prochaine tentative
         raise
+    spi.init(baudrate=config.TFT_BAUDRATE)    # ecran pret : on dessine a pleine vitesse
     return Screen(tft)
