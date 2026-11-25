@@ -149,6 +149,22 @@ def test_game_over_and_new_game():
     assert app.state == M.BET and app.game.balance == config.START_BALANCE
 
 
+def test_game_over_sleeps_and_wakes_to_game_over():
+    app = fresh()
+    run(app, 2000)
+    app.game.balance = 10
+    app.game.draw_number = lambda: 0
+    press(app, "spin")
+    run(app, config.SPIN_TOTAL_MS + config.RESULT_SHOW_MS + 500)
+    assert app.state == M.GAMEOVER
+    run(app, config.SLEEP_TIMEOUT_MS)
+    assert app.state == M.SLEEP
+    press(app, "next")                         # reveil : on retrouve l'ecran GAME OVER
+    assert app.state == M.GAMEOVER
+    press(app, "spin", hold=config.LONG_PRESS_MS + 200)
+    assert app.state == M.BET and app.game.balance == config.START_BALANCE
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

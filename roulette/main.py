@@ -201,7 +201,9 @@ class App:
             # Le bouton qui reveille ne doit pas aussi jouer (ex: SPIN lancerait un tour)
             self.pad.mute_held()
             self.buzzer.play(sound.CLICK)
-            self.enter(BET, now)
+            self.enter(BET, now)                         # redessine l'ecran de jeu
+            if self.game.is_broke():
+                self.enter(GAMEOVER, now)                # on s'etait endormi en GAME OVER
 
     def _do_bet(self, now):
         g, s = self.game, self.screen
@@ -275,6 +277,8 @@ class App:
                 self.enter(BET, now)
                 self.screen.draw_status("NEW GAME", "info")
                 return
+        if ticks_diff(now, self.last_activity) >= config.SLEEP_TIMEOUT_MS:
+            self.enter(SLEEP, now)                       # personne : veille, comme en BET
 
     def _do_error(self, now):
         """Ecran absent : on signale (anneau rouge, DEL, bips) et on reessaie."""
